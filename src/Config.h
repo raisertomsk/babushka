@@ -11,12 +11,7 @@ private:
     void load()
     {
         byte hour = eeprom_read_byte(0);
-        Serial.print("Start hour red: ");
-        Serial.println(hour);
-
         byte minute = eeprom_read_byte(1);
-        Serial.print("Start minute red: ");
-        Serial.println(minute);
         if (hour > 23)
         {
             hour = 8;
@@ -24,12 +19,7 @@ private:
         begin->set(hour, minute);
 
         hour = eeprom_read_byte(2);
-        Serial.print("End hour red: ");
-        Serial.println(hour);
-
         minute = eeprom_read_byte(3);
-        Serial.print("End minute red: ");
-        Serial.println(minute);
         if (hour > 23)
         {
             hour = 19;
