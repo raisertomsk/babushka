@@ -4,11 +4,17 @@
 #include "Weather.h"
 #include "TimeController.h"
 #include "Lights.h"
+#include "Config.h"
 
 Moisture *moisture;
 Weather *weather;
 TimeController *time;
 Lights *lights;
+Config *config;
+
+// @TODO make class for this shit
+const int ASCII_SWAP = 48;
+const int DECIMAL_MULTIPLIER = 10;
 
 void setup()
 {
@@ -17,6 +23,7 @@ void setup()
   weather = new Weather();
   time = new TimeController();
   lights = new Lights();
+  config = new Config();
 }
 
 void read()
@@ -32,7 +39,7 @@ void read()
       {
         time->setTime(buf);
       }
-      if (buf[1] == 'L')
+      else if (buf[1] == 'L')
       {
         if (buf[2] == '1')
         {
@@ -42,6 +49,15 @@ void read()
         {
           lights->turnOff();
         }
+      }
+      else if (buf[1] == 'C')
+      {
+        config->setBegin(
+            (buf[2] - ASCII_SWAP) * DECIMAL_MULTIPLIER + (buf[3] - ASCII_SWAP),
+            (buf[4] - ASCII_SWAP) * DECIMAL_MULTIPLIER + (buf[5] - ASCII_SWAP));
+        config->setEnd(
+            (buf[6] - ASCII_SWAP) * DECIMAL_MULTIPLIER + (buf[7] - ASCII_SWAP),
+            (buf[8] - ASCII_SWAP) * DECIMAL_MULTIPLIER + (buf[9] - ASCII_SWAP));
       }
     }
     else if (buf[0] == 'G')
@@ -72,7 +88,10 @@ void read()
 void setLights()
 {
   Ds1302::DateTime dt = time->getTime();
-  if (dt.hour >= 8 && dt.hour < 19)
+  int startTime = config->getBegin()->getHour() * 60 + config->getBegin()->getMinute();
+  int endTime = config->getEnd()->getHour() * 60 + config->getEnd()->getMinute();
+
+  if ((dt.hour * 60 + dt.minute >= startTime) && (dt.hour * 60 + dt.minute < endTime))
   {
     lights->turnOn();
   }
@@ -84,7 +103,8 @@ void setLights()
 
 void loop()
 {
-  delay(2000);
+  delay(1900);
   read();
+  delay(100);
   setLights();
 }
