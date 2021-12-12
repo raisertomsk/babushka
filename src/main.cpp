@@ -74,6 +74,17 @@ void read()
       {
         Serial.println(moisture->read(buf));
       }
+      else if (buf[1] == 'C')
+      {
+        Serial.print("Start time: ");
+        Serial.print(config->getBegin()->getHour());
+        Serial.print(":");
+        Serial.println(config->getBegin()->getMinute());
+        Serial.print("End time: ");
+        Serial.print(config->getEnd()->getHour());
+        Serial.print(":");
+        Serial.println(config->getEnd()->getMinute());
+      }
     }
 
     Serial.print("I received: ");

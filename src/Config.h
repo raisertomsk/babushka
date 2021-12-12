@@ -24,7 +24,7 @@ private:
         {
             hour = 19;
         }
-        begin->set(hour, minute);
+        end->set(hour, minute);
     }
 
     void save()
